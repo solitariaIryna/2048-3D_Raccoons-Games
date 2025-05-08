@@ -1,5 +1,5 @@
-﻿using G2048_3D.Gameplay.Services;
-using G2048_3D.Gameplay.Services.Input;
+﻿using G2048_3D.Gameplay.Core;
+using G2048_3D.Gameplay.Services;
 using UnityEngine;
 using Zenject;
 
@@ -7,7 +7,7 @@ namespace G2048_3D.Gameplay.Player
 {
     public class PlayerHand : MonoBehaviour
     {
-        [SerializeField] private float _pushForce = 100;
+        [SerializeField] private Vector3 _pushForce = new Vector3(0, 0, 70);
         [SerializeField] private GhostTarget _moveTarget;
 
         private IInputService _inputService;
@@ -26,9 +26,8 @@ namespace G2048_3D.Gameplay.Player
         private void Awake()
         {
             _moveTarget.Initialize();
-          //  _inputService.MouseUp += PushTarget;
             _cubeService.Spawner.PushedCubeSpawned += SetPushableTarget;
-            _moveTarget.MouseUp += PushTarget;
+            _inputService.MouseUp += PushTarget;
         }
         private void Update()
         {
@@ -39,9 +38,8 @@ namespace G2048_3D.Gameplay.Player
         }
         private void OnDisable()
         {
-          //  _inputService.MouseUp -= PushTarget;
             _cubeService.Spawner.PushedCubeSpawned -= SetPushableTarget;
-            _moveTarget.MouseUp -= PushTarget;
+            _inputService.MouseUp -= PushTarget;
         }
         private void PushTarget()
         {
@@ -54,9 +52,9 @@ namespace G2048_3D.Gameplay.Player
             _moveTarget.Enable(false);
         }
 
-        public void SetPushableTarget(IPushable pushableTarget)
+        public void SetPushableTarget(IPushableProvider pushableTarget)
         {
-            _pushableTarget = pushableTarget;
+            _pushableTarget = pushableTarget.Pushable;
             _moveTarget.Enable(true);
         }
 

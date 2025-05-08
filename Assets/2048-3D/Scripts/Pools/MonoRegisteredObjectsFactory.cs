@@ -4,7 +4,7 @@ using Zenject;
 
 namespace G2048_3D.Pool
 {
-    public class MonoRegisteredObjectsFactory
+    public class MonoRegisteredObjectsFactory : IFactory
     {
         private readonly DiContainer _diContainer;
         private readonly IAssetProvider _assetProvider;

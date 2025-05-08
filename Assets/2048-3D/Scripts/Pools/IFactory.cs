@@ -2,8 +2,8 @@ using UnityEngine;
 
 namespace G2048_3D.Pool
 {
-    public interface IFactory<T> 
+    public interface IFactory
     {
-        T CreateNewItem();
+        T CreateObject<T>(T prefab) where T : MonoBehaviour;
     }
 }

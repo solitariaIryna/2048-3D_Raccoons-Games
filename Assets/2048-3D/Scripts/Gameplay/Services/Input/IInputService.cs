@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace G2048_3D.Gameplay.Services.Input
+namespace G2048_3D.Gameplay.Services
 {
     public interface IInputService
     {

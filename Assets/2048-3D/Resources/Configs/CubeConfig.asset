@@ -12,14 +12,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d9e2efd32462274b82aabfa3c8cfb9a, type: 3}
   m_Name: CubeConfig
   m_EditorClassIdentifier: 
+  _numbersChance:
+  - Number: 2
+    Chance: 0.75
+  - Number: 4
+    Chance: 0.25
   _colorsForNumbers:
     list:
     - Key: 2
-      Value: {r: 0.40000004, g: 0.19607845, b: 0.21960786, a: 1}
+      Value: {r: 0.5999999, g: 0.14377353, b: 0.19641502, a: 1}
     - Key: 4
-      Value: {r: 0.76470596, g: 0.3803922, b: 0.15294118, a: 1}
+      Value: {r: 0.87169814, g: 0.41398278, b: 0.14309002, a: 1}
     - Key: 8
-      Value: {r: 0.70980394, g: 0.6666667, b: 0.29803923, a: 1}
+      Value: {r: 0.79622644, g: 0.72587526, b: 0.124692, a: 1}
     - Key: 16
-      Value: {r: 0.68235296, g: 1, b: 0.5921569, a: 1}
+      Value: {r: 0.28385082, g: 0.85660374, b: 0.12121739, a: 1}
+    - Key: 32
+      Value: {r: 0.15355639, g: 0.7518814, b: 0.89433956, a: 1}
+    - Key: 64
+      Value: {r: 0.61393595, g: 0.21359201, b: 0.86415094, a: 1}
+    - Key: 128
+      Value: {r: 0.9169811, g: 0.25892684, b: 0.18512635, a: 1}
     keyCollision: 0

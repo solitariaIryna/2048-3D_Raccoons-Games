@@ -2,6 +2,8 @@
 using G2048_3D.Infrastructure.App.StatesMachine;
 using G2048_3D.Services.AssetProvider;
 using G2048_3D.Services.ConfigsProvider;
+using G2048_3D.Services.Factory;
+using G2048_3D.Services.Window;
 using Zenject;
 
 namespace G2048_3D.Infrastructure.App
@@ -26,6 +28,16 @@ namespace G2048_3D.Infrastructure.App
             Container
                 .Bind<IConfigsProvider>()
                 .To<ConfigsProvider>()
+                .AsSingle();
+
+            Container
+                .Bind<IUIFactory>()
+                .To<UIFactory>()
+                .AsSingle();
+
+            Container
+                .Bind<IWindowService>()
+                .To<WindowService>()
                 .AsSingle();
 
             Container

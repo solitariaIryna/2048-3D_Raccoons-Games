@@ -1,6 +1,7 @@
 ﻿using G2048_3D.Gameplay.Entities.Cube;
 using G2048_3D.Pool;
 using G2048_3D.Services.AssetProvider;
+using G2048_3D.Services.ConfigsProvider;
 using System;
 using UnityEngine;
 
@@ -11,63 +12,72 @@ namespace G2048_3D.Gameplay.Services
         private const string CUBE_POOL_NAME = "Cube Pool";
 
         private readonly IAssetProvider _assetProvider;
-        private MonoStackPool<CubeEntity> _cubePool;
+        private readonly MonoRegisteredObjectsFactory _objectsFactory;
+        private readonly IConfigsProvider _configsProvider;
+        private MonoQueuePool<MergableCube> _cubePool;
 
         private Transform _cubeParent;
 
         private Transform _spawnPoint;
 
-        public Action<CubeEntity> PushedCubeSpawned;
-        public Action<CubeEntity> CubeSpawned;
+        public Action<MergableCube> PushedCubeSpawned;
+        public Action<MergableCube> CubeSpawned;
         public Action CubePushedEnded;
-        public CubeSpawner(IAssetProvider assetProvider)
+        public CubeSpawner(IAssetProvider assetProvider, 
+            MonoRegisteredObjectsFactory objectsFactory, IConfigsProvider configsProvider)
         {
             _assetProvider = assetProvider;
+            _objectsFactory = objectsFactory;
+            _configsProvider = configsProvider;
             _cubeParent = new GameObject(CUBE_POOL_NAME).transform;
             CreateCubePool();
         }
         public void SetSpawnPoint(Transform spawnPoint) => 
             _spawnPoint = spawnPoint;
-        public void SpawnCube(CubeData cubeData)
+        public void SpawnCube(MergableCubeData cubeData)
         {
-            CubeEntity cube = _cubePool.GetItem();
-            cube.Position = _spawnPoint.position;
+            MergableCube cube = _cubePool.GetItem();
+            cube.IsPushableTarget = true;
             cube.SetData(cubeData);
-            cube.PushEnded += OnCubeCollisitionEntered;
+            cube.transform.eulerAngles = Vector3.zero;
+            cube.Position = _spawnPoint.position;
+            cube.PushCompleted += OnCubeCollisitionHappen;
             cube.Released.Add(CubeDespawned);
+            cube.SimpleShow();
             PushedCubeSpawned?.Invoke(cube);
         }
 
-        private void CubeDespawned(CubeEntity cube)
+        private void CubeDespawned(MergableCube cube)
         {
-            cube.PushEnded?.Invoke(cube);
-            cube.PushEnded -= OnCubeCollisitionEntered;
+            cube.Released.Remove(CubeDespawned);
+            cube.PushCompleted -= OnCubeCollisitionHappen;
         }
 
-        public void SpawnMergedCube(CubeData cubeData)
+        private void OnCubeCollisitionHappen(MergableCube cube)
         {
-            CubeEntity cube = _cubePool.GetItem();
+            cube.IsPushableTarget = false;
+            cube.PushCompleted -= OnCubeCollisitionHappen;
+            MergableCubeData newData = new(_configsProvider.GetCubeConfig().GetNumber(), _spawnPoint.position, Vector3.zero);
+            SpawnCube(newData);
+        }
+
+        public void SpawnMergedCube(MergableCubeData cubeData)
+        {
+            MergableCube cube = _cubePool.GetItem();           
             cube.SetData(cubeData);
-            cube.EnablePhysics();
+            cube.transform.eulerAngles = cubeData.Rotation;
+            cube.Pushable.EnablePhysics(true);
+            cube.PushShow();
 
             CubeSpawned?.Invoke(cube);
         }
-
-        private void OnCubeCollisitionEntered(CubeEntity cube)
-        {
-            cube.PushEnded -= OnCubeCollisitionEntered;
-            CubePushedEnded?.Invoke();
-        }
-
         private void CreateCubePool()
         {
-            CubeEntity prefab = _assetProvider.Load<CubeEntity>(AssetPath.CubePath);
+            MergableCube prefab = _assetProvider.Load<MergableCube>(AssetPath.CubePath);
 
-            _cubePool = new(prefab, 0, _cubeParent, true);
+            _cubePool = new(prefab, 6, _cubeParent, true);
 
-            MonoIInitializableFactory<CubeEntity> factory = new(prefab, null);
-
-            _cubePool.Initialize(factory);
+            _cubePool.Initialize(_objectsFactory);
         }
     }
 }

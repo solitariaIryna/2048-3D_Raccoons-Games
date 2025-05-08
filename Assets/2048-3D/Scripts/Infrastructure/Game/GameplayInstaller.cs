@@ -1,10 +1,11 @@
-﻿using G2048_3D.Services.Command;
-using G2048_3D.Infrastructure.Game.Factory;
-using G2048_3D.Infrastructure.Gameplay.StatesMachine;
+﻿using G2048_3D.Infrastructure.Gameplay.StatesMachine;
 using Zenject;
 using G2048_3D.Gameplay.Services;
-using G2048_3D.Gameplay.Services.Input;
+using G2048_3D.Gameplay.Services.Score;
+using G2048_3D.Gameplay.Entities.Cube;
 using G2048_3D.Pool;
+using G2048_3D.Gameplay.Services.Particle;
+using UnityEngine;
 
 namespace G2048_3D.Infrastructure.Installers
 {
@@ -12,32 +13,49 @@ namespace G2048_3D.Infrastructure.Installers
     {
         public override void InstallBindings()
         {
-            Container
-                .Bind<ICommandProcessor>()
-                .To<CommandProcessor>()
-                .AsSingle();
+            GameObject inputObject = new GameObject("Input Service");
+
+            IInputService inputService = Application.isMobilePlatform
+                                       ? inputObject.AddComponent<MobileInputService>()
+                                       : inputObject.AddComponent<StandaloneInputService>();
 
             Container
                 .Bind<IInputService>()
-                .To<HybridInputService>()
+                .FromInstance(inputService)
                 .AsSingle();
 
             Container
-                 .BindInterfacesAndSelfTo<MonoRegisteredObjectsFactory>()
-                 .AsSingle();
+                .BindInterfacesAndSelfTo<ParticleRunnerService>()
+                .AsSingle();
 
             Container
-                .BindInterfacesAndSelfTo<GameFactory>()
+                .Bind<IScoreChangerService>()
+                .To<ScoreChangerService>()
                 .AsSingle();
 
             Container
                 .BindInterfacesAndSelfTo<LevelsService>()
                 .AsSingle();
 
+
+            Container
+                .Bind<IMergeStrategy<MergableCubeData, MergableCubeVisual>>()
+                .To<CubeMergeStrategy>()
+                .AsSingle();
+
+            Container
+                .Bind<IMergeService<MergableCubeData, MergableCubeVisual>>()
+                .To<MergeService<MergableCubeData, MergableCubeVisual>>()
+                .AsSingle();
+
+            Container
+                .Bind<MonoRegisteredObjectsFactory>()
+                .AsSingle();
+
             Container
                 .BindInterfacesAndSelfTo<CubeService>()
                 .AsSingle();
-
+            
             Container
                .Bind<GameplayStatesFactory>()
                .AsSingle();

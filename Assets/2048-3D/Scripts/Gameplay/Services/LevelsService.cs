@@ -8,14 +8,15 @@ namespace G2048_3D.Gameplay.Services
     {
         private readonly IAssetProvider _assetProvider;
 
+        public Level CurrentLevel { get; private set; }
         public LevelsService(IAssetProvider assetProvider)
         {
             _assetProvider = assetProvider;
         }
         public Level CreateLevel(int number)
         {
-            Level level = _assetProvider.Instantiate<Level>(AssetPath.LevelPath);
-            return level;
+            CurrentLevel = _assetProvider.Instantiate<Level>(AssetPath.LevelPath);
+            return CurrentLevel;
         }
     }
 }
