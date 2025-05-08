@@ -31,6 +31,7 @@ namespace G2048_3D.Infrastructure.Gameplay.StatesMachine
                 if (cube.IsPushableTarget)
                     return;
 
+                Taptic.Failure();
                 _levelsService.CurrentLevel.DeadArea.TriggerEnter -= DeadAreaTriggered;
                 _stateMachine.Enter<LoseGameState>();
             }

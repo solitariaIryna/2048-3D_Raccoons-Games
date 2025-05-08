@@ -68,7 +68,7 @@ namespace G2048_3D.Gameplay.Entities.Cube
 
         public void Show()
         {
-            transform.DOScale(1.2f, 0.2f).From(1).SetEase(Ease.OutSine).OnComplete(() =>
+            transform.DOScale(1.1f, 0.2f).From(1).SetEase(Ease.OutBack).OnComplete(() =>
             {
                 transform.DOScale(1f, 0.1f).From(1).SetEase(Ease.InSine);
             });

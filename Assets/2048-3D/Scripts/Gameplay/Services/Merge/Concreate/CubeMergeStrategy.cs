@@ -39,7 +39,7 @@ namespace G2048_3D.Gameplay.Services
                 data.VisualFirst.PlayMergeAnimation(avarangePosition, color, firstTargetRotation, new CancellationTokenSource()),
                 data.VisualSecond.PlayMergeAnimation(avarangePosition, color, secondTargetRotation, new CancellationTokenSource())
             );
-
+            Taptic.Success();
             MergableCubeData newData = new MergableCubeData(newNumber, avarangePosition, firstTargetRotation);
 
             MergeResult<MergableCubeData> result = new(true, newData);

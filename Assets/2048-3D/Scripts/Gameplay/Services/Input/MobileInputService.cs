@@ -12,6 +12,8 @@ namespace G2048_3D.Gameplay.Services
 
         private void Update()
         {
+            Axis = Vector2.zero;
+
             if (Input.touchCount == 0)
                 return;
 

@@ -12,6 +12,7 @@ namespace G2048_3D.Gameplay.Entities.Cube
     {
         [field: SerializeField] public MergableCubeVisual Visual { get; private set; }
         [SerializeField] private DirectionMovementPusher _directionPusher;
+        [SerializeField] private float _pushUpForce = 12;
         [SerializeField] private CubeConfig _config;
         public NonAllocEvent<MergableCube> Released { get; private set; } = new NonAllocEvent<MergableCube>();
 
@@ -61,15 +62,13 @@ namespace G2048_3D.Gameplay.Entities.Cube
             pushDirection.y = 1;
             pushDirection.z = Mathf.Abs(pushDirection.z);
 
-            Pushable.Push(pushDirection * 12);
+            Pushable.Push(pushDirection * _pushUpForce);
             SimpleShow();
         }
         public void SimpleShow()
         {
-            transform.DOScale(1.2f, 0.1f).From(1).SetEase(Ease.OutBack).OnComplete(() =>
-            {
-                transform.DOScale(1f, 0.1f).From(1).SetEase(Ease.InBack);
-            });
+            Visual.Show();
+           
         }
         private void OnPushCompleted() => 
             PushCompleted?.Invoke(this);
@@ -93,6 +92,7 @@ namespace G2048_3D.Gameplay.Entities.Cube
             {
                 if (CanMerge && mergableCube.CanMerge)
                 {
+                    Taptic.Vibrate();
                     CanBeMerged?.Invoke(this, mergableCube);
                 }
                 
